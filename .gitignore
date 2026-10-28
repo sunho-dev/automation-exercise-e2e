@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+.pytest_cache/
+test-results/
+
+# 개인 기록 (지원 회사·일정 메모 포함)
+DEVLOG.md
+PORTFOLIO_INFO.md
+portfolio_summary.*
