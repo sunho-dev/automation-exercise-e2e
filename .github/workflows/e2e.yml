@@ -1,0 +1,52 @@
+name: E2E Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  # 매일 오전 9시(KST)에 실행해 사이트 변경으로 깨진 시나리오가 없는지 확인한다 (cron은 UTC 기준)
+  schedule:
+    - cron: "0 0 * * *"
+  # Actions 탭에서 수동 실행
+  workflow_dispatch:
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          playwright install --with-deps chromium
+
+      - name: Run E2E tests
+        run: >
+          pytest -v
+          --html=reports/report.html --self-contained-html
+          --screenshot only-on-failure
+          --tracing retain-on-failure
+
+      # 성공·실패와 관계없이 HTML 리포트를 남긴다
+      - name: Upload test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-report
+          path: reports/report.html
+
+      # 실패한 시나리오의 스크린샷과 trace (playwright show-trace로 단계별 재생)
+      - name: Upload failure screenshots and traces
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: test-results/
