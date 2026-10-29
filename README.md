@@ -10,7 +10,7 @@
 |---|---|
 | 대상 | [Automation Exercise](https://automationexercise.com) (자동화 연습용 공개 쇼핑몰) |
 | TC | 17개 설계 → **13개 자동화**, 4개 수동 ([TC 목록](docs/test_cases.csv)) |
-| 결과 | 13개 전부 통과, 전체 실행 약 1분 30초 ([테스트 리포트](docs/report.html)) |
+| 결과 | 13개 전부 통과, 전체 실행 약 1분 30초 ([테스트 리포트 보기](https://htmlpreview.github.io/?https://github.com/sunho-dev/automation-exercise-e2e/blob/main/docs/report.html)) |
 | 기술 | Python 3.12, pytest, Playwright, pytest-html |
 
 ---
