@@ -1,5 +1,7 @@
 # Automation Exercise E2E 자동화
 
+[![E2E Tests](https://github.com/sunho-dev/automation-exercise-e2e/actions/workflows/e2e.yml/badge.svg)](https://github.com/sunho-dev/automation-exercise-e2e/actions/workflows/e2e.yml)
+
 쇼핑몰의 **회원가입 → 로그인 → 장바구니 → 주문·결제 → 탈퇴** 흐름을 직접 TC로 설계하고, Python + pytest + Playwright로 E2E 자동화한 프로젝트입니다.
 
 ![비로그인 주문 시나리오(ORD-002) 실행 화면](docs/images/ord-002.gif)
@@ -11,7 +13,8 @@
 | 대상 | [Automation Exercise](https://automationexercise.com) (자동화 연습용 공개 쇼핑몰) |
 | TC | 17개 설계 → **13개 자동화**, 4개 수동 ([TC 목록](docs/test_cases.csv)) |
 | 결과 | 13개 전부 통과, 전체 실행 약 1분 30초 ([테스트 리포트 보기](https://htmlpreview.github.io/?https://github.com/sunho-dev/automation-exercise-e2e/blob/main/docs/report.html)) |
-| 기술 | Python 3.12, pytest, Playwright, pytest-html |
+| 기술 | Python 3.12, pytest, Playwright, pytest-html, GitHub Actions |
+| 자동 실행 | 푸시·PR마다, 그리고 매일 오전 9시(KST)에 GitHub Actions로 전체 실행 ([실행 기록](https://github.com/sunho-dev/automation-exercise-e2e/actions)) |
 
 ---
 
@@ -110,9 +113,20 @@ pytest -v --headed --slowmo 500 -k guest          # 브라우저를 띄워 ORD-0
 pytest --html=docs/report.html --self-contained-html   # HTML 리포트 생성
 ```
 
-## 7. 실무와의 관계
+## 7. CI (GitHub Actions)
 
-실무에서는 같은 유형의 시나리오를 **웹(Playwright)과 앱(Appium)에서 함께 실행해 결과를 교차 확인**했고, 스케줄러로 매일 돌려 결과를 메신저로 공유했습니다. 이 사이트는 앱이 없어서 **이 저장소에는 웹 E2E만** 있습니다.
+[`.github/workflows/e2e.yml`](.github/workflows/e2e.yml)에서 전체 시나리오를 자동으로 실행합니다.
 
-## 다음 계획
-- GitHub Actions로 푸시할 때와 매일 정해진 시간에 자동 실행할 예정입니다.
+| 실행 시점 | 목적 |
+|---|---|
+| main 푸시, Pull Request | 코드 변경이 기존 시나리오를 깨뜨리지 않는지 합치기 전에 확인합니다. |
+| 매일 오전 9시(KST) | 코드가 그대로여도 대상 사이트가 바뀌어 깨지는 시나리오를 잡습니다. 운영 모니터링에 가까운 역할입니다. |
+| 수동 실행 | Actions 탭에서 필요할 때 실행합니다. |
+
+실행이 끝나면 HTML 리포트를 결과물(Artifacts)로 남기고, 실패하면 스크린샷과 Playwright trace도 함께 남겨 다시 돌리지 않고도 원인을 볼 수 있게 했습니다.
+
+## 8. 실무와의 관계
+
+실무에서는 같은 유형의 시나리오를 **웹(Playwright)과 앱(Appium)에서 함께 실행해 결과를 교차 확인**했고, 매일 돌려 결과를 메신저로 공유했습니다.
+
+실무에서도 처음에는 GitHub Actions로 정기 실행을 구성하려 했습니다. 그런데 앱 테스트는 실제 기기나 에뮬레이터가 필요해 클라우드 실행 환경에서 돌리기 어려웠고, 웹과 앱 결과를 함께 비교해야 했기 때문에 **기기가 연결된 PC에서 구글 시트 + 데몬 스케줄러로 운영**하는 방식으로 바꿨습니다. 이 사이트는 앱이 없어 **이 저장소에는 웹 E2E만** 있으므로, 원래 의도대로 GitHub Actions로 구성했습니다.
